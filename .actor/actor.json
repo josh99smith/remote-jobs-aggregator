@@ -1,0 +1,21 @@
+{
+    "$schema": "https://apify.com/schemas/v1/actor.ide.json",
+    "actorSpecification": 1,
+    "name": "remote-jobs-aggregator",
+    "title": "Remote Jobs Aggregator API",
+    "description": "Collect remote job listings from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely into one normalized dataset: title, company, region, salary, tags, description and apply link. Public APIs and RSS feeds only, with per-job pricing.",
+    "version": "0.1",
+    "buildTag": "latest",
+    "meta": {
+        "templateId": "ts-empty",
+        "generatedBy": "Claude Code with Claude Opus 5"
+    },
+    "inputSchema": "./input_schema.json",
+    "outputSchema": "./output_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "../Dockerfile",
+    "minMemoryMbytes": 256,
+    "maxMemoryMbytes": 1024
+}

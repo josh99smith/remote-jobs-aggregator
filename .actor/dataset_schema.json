@@ -1,0 +1,76 @@
+{
+    "actorSpecification": 1,
+    "fields": {},
+    "views": {
+        "overview": {
+            "title": "Overview",
+            "transformation": {
+                "fields": [
+                    "title",
+                    "company",
+                    "source",
+                    "remoteRegion",
+                    "category",
+                    "employmentType",
+                    "salaryMin",
+                    "salaryMax",
+                    "salaryCurrency",
+                    "publishedAt",
+                    "url",
+                    "errorType",
+                    "error"
+                ]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "title": { "label": "Job title", "format": "text" },
+                    "company": { "label": "Company", "format": "text" },
+                    "source": { "label": "Source", "format": "text" },
+                    "remoteRegion": { "label": "Region", "format": "text" },
+                    "category": { "label": "Category", "format": "text" },
+                    "employmentType": { "label": "Type", "format": "text" },
+                    "salaryMin": { "label": "Salary min", "format": "number" },
+                    "salaryMax": { "label": "Salary max", "format": "number" },
+                    "salaryCurrency": { "label": "Currency", "format": "text" },
+                    "publishedAt": { "label": "Published", "format": "date" },
+                    "url": { "label": "Job page", "format": "link" },
+                    "errorType": { "label": "Error type", "format": "text" },
+                    "error": { "label": "Error", "format": "text" }
+                }
+            }
+        },
+        "details": {
+            "title": "Details",
+            "transformation": {
+                "fields": [
+                    "companyLogo",
+                    "title",
+                    "company",
+                    "source",
+                    "location",
+                    "tags",
+                    "salaryRaw",
+                    "descriptionText",
+                    "applyUrl",
+                    "publishedAt"
+                ]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "companyLogo": { "label": "Logo", "format": "image" },
+                    "title": { "label": "Job title", "format": "text" },
+                    "company": { "label": "Company", "format": "text" },
+                    "source": { "label": "Source", "format": "text" },
+                    "location": { "label": "Location", "format": "text" },
+                    "tags": { "label": "Tags", "format": "array" },
+                    "salaryRaw": { "label": "Salary", "format": "text" },
+                    "descriptionText": { "label": "Description", "format": "text" },
+                    "applyUrl": { "label": "Apply", "format": "link" },
+                    "publishedAt": { "label": "Published", "format": "date" }
+                }
+            }
+        }
+    }
+}

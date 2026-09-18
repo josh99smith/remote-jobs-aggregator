@@ -1,0 +1,77 @@
+{
+    "$schema": "https://apify.com/schemas/v1/input.ide.json",
+    "title": "Remote Jobs Aggregator input",
+    "description": "Pick the job boards to pull from and optionally narrow the results by keyword, category and age. Each job listed is one billable result; a source that cannot be reached is reported for free.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "sources": {
+            "title": "Job boards",
+            "type": "array",
+            "description": "Which public job feeds to collect from. All five are used when nothing is selected.",
+            "editor": "select",
+            "items": {
+                "type": "string",
+                "enum": ["remoteok", "remotive", "himalayas", "jobicy", "weworkremotely"],
+                "enumTitles": ["RemoteOK", "Remotive", "Himalayas", "Jobicy", "We Work Remotely"]
+            },
+            "prefill": ["remoteok", "remotive", "himalayas", "jobicy", "weworkremotely"],
+            "default": ["remoteok", "remotive", "himalayas", "jobicy", "weworkremotely"],
+            "uniqueItems": true
+        },
+        "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "Keep only jobs whose title, company or tags contain at least one of these words (case-insensitive), e.g. `python`, `react`, `product manager`. Leave empty for all jobs.",
+            "editor": "stringList",
+            "prefill": [],
+            "default": []
+        },
+        "categories": {
+            "title": "Categories",
+            "type": "array",
+            "description": "Keep only jobs whose category or tags loosely match one of these, e.g. `programming`, `design`, `marketing`, `customer support`, `devops`. Matching is fuzzy because every board uses its own category names. Leave empty for all categories.",
+            "editor": "stringList",
+            "prefill": [],
+            "default": []
+        },
+        "maxJobsPerSource": {
+            "title": "Max jobs per source",
+            "type": "integer",
+            "description": "Upper limit of jobs collected from each board before filtering. Boards expose between roughly 100 and 1,000 recent jobs.",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 1000,
+            "editor": "number"
+        },
+        "postedWithinDays": {
+            "title": "Posted within (days)",
+            "type": "integer",
+            "description": "Skip jobs published more than this many days ago. Use 0 for no age limit.",
+            "default": 30,
+            "minimum": 0,
+            "maximum": 365,
+            "editor": "number"
+        },
+        "dedupe": {
+            "title": "Remove duplicates across boards",
+            "type": "boolean",
+            "description": "The same opening is often posted on several boards. When on, only the first copy of each title + company pair is kept.",
+            "default": true
+        },
+        "includeDescription": {
+            "title": "Include HTML description",
+            "type": "boolean",
+            "description": "Add the full job description as HTML (`descriptionHtml`, capped at 20,000 characters). A plain-text excerpt (`descriptionText`, first 2,000 characters) is always included.",
+            "default": true
+        },
+        "includeRaw": {
+            "title": "Include raw source record",
+            "type": "boolean",
+            "description": "Attach the unmodified item from the source API or feed under `raw`. Useful when you need a source-specific field that is not part of the normalized output. Makes the dataset larger.",
+            "default": false,
+            "sectionCaption": "Advanced"
+        }
+    },
+    "required": []
+}

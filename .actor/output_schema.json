@@ -1,0 +1,18 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Remote Jobs Aggregator output",
+    "properties": {
+        "results": {
+            "type": "string",
+            "title": "Job listings",
+            "template": "{{links.apiDefaultDatasetUrl}}",
+            "description": "One normalized record per remote job (title, company, region, salary, tags, description, URLs) plus a free failure record for any source that could not be fetched."
+        },
+        "summary": {
+            "type": "string",
+            "title": "Run summary",
+            "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY",
+            "description": "Per-source counts of fetched, filtered, de-duplicated and billed jobs."
+        }
+    }
+}
