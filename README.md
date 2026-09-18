@@ -1,4 +1,15 @@
-Get **fresh remote job listings from five public job boards in one normalized dataset**. Remote Jobs Aggregator pulls the latest openings from [RemoteOK](https://remoteok.com), [Remotive](https://remotive.com), [Himalayas](https://himalayas.app), [Jobicy](https://jobicy.com) and [We Work Remotely](https://weworkremotely.com), maps every listing to the same fields (title, company, region, salary, tags, description, apply link) and removes duplicates across boards. It only uses the boards' **official public APIs and RSS feeds**. It is **not** a scraper of LinkedIn, Indeed or any site that forbids automated access.
+A **remote jobs API** that collects fresh remote job listings from five public job boards into one normalized dataset. Remote Jobs Aggregator pulls the latest openings from [RemoteOK](https://remoteok.com), [Remotive](https://remotive.com), [Himalayas](https://himalayas.app), [Jobicy](https://jobicy.com) and [We Work Remotely](https://weworkremotely.com), maps every listing to the same fields (title, company, region, salary, tags, description, apply link) and removes duplicates across boards. It only uses the boards' **official public APIs and RSS feeds**. It is **not** a scraper of LinkedIn, Indeed or any site that forbids automated access.
+
+## Features
+
+- Get remote developer jobs as JSON from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely
+- Filter remote jobs by keyword, for example python, react or product manager
+- Filter remote jobs by category such as programming, design, marketing or customer support
+- Get remote jobs with salary ranges parsed into numbers and currency
+- Export remote job listings to CSV, Excel or Google Sheets
+- Deduplicate the same job posted on several remote job boards
+- Schedule a daily remote jobs feed for a job board, newsletter or Slack digest
+- Filter remote jobs by hiring region (US, EU, UK, LATAM, APAC, Worldwide)
 
 ## What can you do with Remote Jobs Aggregator?
 
@@ -33,6 +44,47 @@ Boards expose only their most recent listings (roughly 100 to 1,000 each; Remoti
     "includeDescription": true
 }
 ```
+
+## Use it from the API, Python, JavaScript or an AI agent
+
+Fetch the latest matching jobs in one HTTP call:
+
+```bash
+curl -X POST "https://api.apify.com/v2/acts/josh99smith~remote-jobs-aggregator/run-sync-get-dataset-items?token=<YOUR_API_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"keywords": ["python"], "postedWithinDays": 7}'
+```
+
+Python, with the `apify-client` package:
+
+```python
+from apify_client import ApifyClient
+
+client = ApifyClient("<YOUR_API_TOKEN>")
+run = client.actor("josh99smith/remote-jobs-aggregator").call(
+    run_input={"sources": ["remoteok", "remotive", "jobicy"], "keywords": ["python", "django"], "postedWithinDays": 7}
+)
+for job in client.dataset(run["defaultDatasetId"]).iterate_items():
+    print(job["title"], "-", job["company"], job["url"])
+```
+
+JavaScript or TypeScript, with the `apify-client` package:
+
+```javascript
+import { ApifyClient } from "apify-client";
+
+const client = new ApifyClient({ token: "<YOUR_API_TOKEN>" });
+const run = await client.actor("josh99smith/remote-jobs-aggregator").call({
+    keywords: ["react", "typescript"],
+    categories: ["programming"],
+    postedWithinDays: 7,
+    includeDescription: false,
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);
+```
+
+The Actor is also available as a tool through the Apify MCP server for AI agents, and it can be scheduled or connected to Zapier, Make, n8n and Google Sheets in the **Integrations** tab.
 
 ## Output
 
@@ -71,7 +123,7 @@ A board that cannot be reached produces a free record instead of stopping the ru
 { "success": false, "source": "Remotive", "errorType": "rate-limited", "error": "HTTP 429 Too Many Requests for https://remotive.com/api/remote-jobs?limit=200", "fetchedAt": "..." }
 ```
 
-### Fields
+## Output fields
 
 | Field | Description |
 | --- | --- |
@@ -112,14 +164,32 @@ Always send applicants to the original posting rather than re-hosting the applic
 
 ## FAQ
 
-**Is it legal to use this data?**
+### Is it legal to use this remote jobs data?
+
 The Actor only reads endpoints the boards publish for this purpose, at low request rates, and stores no personal data. Following each board's attribution conditions and the laws that apply to your use is your responsibility.
 
-**Why does a board return fewer jobs than I asked for?**
-Boards expose only their newest listings (RemoteOK about 100, Remotive a small public sample, Jobicy up to 200, Himalayas and We Work Remotely a few hundred), and `postedWithinDays` removes older ones.
+### How many remote jobs can I get per run?
 
-**Can it search LinkedIn, Indeed or Glassdoor?**
+Boards expose only their newest listings (RemoteOK about 100, Remotive a small public sample, Jobicy up to 200, Himalayas and We Work Remotely a few hundred), so **Max jobs per source** tops out at 1,000 per board and `postedWithinDays` removes older ones. A default run returns 500 to 700 unique jobs.
+
+### How fresh are the listings?
+
+Each run fetches the boards live, so you get whatever they publish at that moment; Remotive delays its public feed by about 24 hours. Schedule the Actor every few hours and filter on `publishedAt` or `id` to pick up only new jobs.
+
+### Can it search LinkedIn, Indeed or Glassdoor?
+
 No. Those sites prohibit automated access and offer no public feed, so they are out of scope by design.
+
+## Related Actors by the same developer
+
+- [Tech Stack Detector](https://apify.com/josh99smith/tech-stack-detector): find out what a website is built with.
+- [Website Screenshot API](https://apify.com/josh99smith/website-screenshot-api): full-page screenshots and PDFs of any URL.
+- [Google Autocomplete Scraper](https://apify.com/josh99smith/google-autocomplete-scraper): keyword suggestions from Google search.
+- [App Reviews Scraper](https://apify.com/josh99smith/app-reviews-scraper): App Store and Google Play reviews as JSON.
+- [PageSpeed Insights Audit](https://apify.com/josh99smith/pagespeed-insights-audit): Core Web Vitals and Lighthouse scores via Google's API.
+- [PDF Text Extractor](https://apify.com/josh99smith/pdf-text-extractor): text and metadata from PDF files.
+- [Sitemap URL Extractor](https://apify.com/josh99smith/sitemap-url-extractor): all URLs from XML sitemaps.
+- [RSS Feed to JSON](https://apify.com/josh99smith/rss-feed-to-json): RSS and Atom feeds as JSON.
 
 ## Support and feedback
 

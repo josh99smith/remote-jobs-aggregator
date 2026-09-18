@@ -3,7 +3,7 @@
     "actorSpecification": 1,
     "name": "remote-jobs-aggregator",
     "title": "Remote Jobs Aggregator API",
-    "description": "Collect remote job listings from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely into one normalized dataset: title, company, region, salary, tags, description and apply link. Public APIs and RSS feeds only, with per-job pricing.",
+    "description": "Remote job listings from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely as clean JSON: title, company, salary, tags, apply URL. Pay per job.",
     "version": "0.1",
     "buildTag": "latest",
     "meta": {

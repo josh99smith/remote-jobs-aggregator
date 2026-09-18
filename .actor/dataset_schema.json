@@ -1,6 +1,183 @@
 {
     "actorSpecification": 1,
-    "fields": {},
+    "fields": {
+        "type": "object",
+        "description": "One normalised remote job listing from RemoteOK, Remotive, Himalayas, Jobicy or We Work Remotely. A board that could not be loaded produces a failure record with success: false, errorType and error instead of job fields.",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "Board-prefixed job identifier, e.g. \"remoteok:1137400\" or \"jobicy:153610\"."
+            },
+            "source": {
+                "type": "string",
+                "description": "Name of the job board the listing came from: \"RemoteOK\", \"Remotive\", \"Himalayas\", \"Jobicy\" or \"We Work Remotely\"."
+            },
+            "success": {
+                "type": "boolean",
+                "description": "True for a job listing (billed); false for a board that could not be loaded (free)."
+            },
+            "title": {
+                "type": "string",
+                "description": "Job title as posted on the board."
+            },
+            "company": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Hiring company name."
+            },
+            "companyLogo": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "format": "uri",
+                "description": "URL of the company logo when the board provides one."
+            },
+            "location": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "The board's own location or hiring-restriction text, e.g. \"USA\" or \"Europe, LATAM\"."
+            },
+            "remoteRegion": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Normalised hiring region: \"Worldwide\", \"US\", \"Canada\", \"LATAM\", \"UK\", \"EU\", \"APAC\", \"Africa\" or \"Middle East\" (comma-separated when several apply)."
+            },
+            "category": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Primary job category as named by the board, e.g. \"Software Development\"."
+            },
+            "tags": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "Skills, technologies, seniority or industry tags attached to the listing."
+            },
+            "employmentType": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Unified employment type: \"Full-Time\", \"Part-Time\", \"Contract\", \"Freelance\", \"Internship\", \"Temporary\" or null."
+            },
+            "salaryMin": {
+                "type": [
+                    "number",
+                    "null"
+                ],
+                "description": "Lower end of the published salary range, as a number."
+            },
+            "salaryMax": {
+                "type": [
+                    "number",
+                    "null"
+                ],
+                "description": "Upper end of the published salary range, as a number."
+            },
+            "salaryCurrency": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "ISO currency code of the salary, e.g. \"USD\" or \"EUR\"."
+            },
+            "salaryPeriod": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Pay period of the salary: \"yearly\", \"monthly\", \"weekly\", \"daily\" or \"hourly\"."
+            },
+            "salaryRaw": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Salary text exactly as the board published it, e.g. \"$170k - $200k\"."
+            },
+            "descriptionHtml": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Full job description as HTML, capped at 20,000 characters; only present when \"Include HTML description\" is on."
+            },
+            "descriptionText": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "description": "Plain-text excerpt of the job description (first 2,000 characters)."
+            },
+            "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Link to the original job posting on the board."
+            },
+            "applyUrl": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "format": "uri",
+                "description": "Direct application link when the board provides one."
+            },
+            "publishedAt": {
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "format": "date-time",
+                "description": "When the job was posted, as an ISO 8601 timestamp."
+            },
+            "fetchedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the actor fetched this record, as an ISO 8601 timestamp."
+            },
+            "raw": {
+                "description": "Only with \"Include raw source record\": the untouched item from the board API or feed, in the board's own format."
+            },
+            "errorType": {
+                "type": "string",
+                "enum": [
+                    "invalid-url",
+                    "dns",
+                    "timeout",
+                    "blocked",
+                    "http-error",
+                    "network",
+                    "not-found",
+                    "rate-limited",
+                    "other"
+                ],
+                "description": "Failure records only: category of the problem, e.g. \"rate-limited\" when the board throttled the request."
+            },
+            "error": {
+                "type": "string",
+                "description": "Failure records only: human-readable explanation of what went wrong."
+            },
+            "statusCode": {
+                "type": "integer",
+                "description": "Failure records only: HTTP status code returned by the board, when there was one."
+            }
+        },
+        "required": [
+            "source",
+            "success",
+            "fetchedAt"
+        ]
+    },
     "views": {
         "overview": {
             "title": "Overview",
@@ -24,19 +201,58 @@
             "display": {
                 "component": "table",
                 "properties": {
-                    "title": { "label": "Job title", "format": "text" },
-                    "company": { "label": "Company", "format": "text" },
-                    "source": { "label": "Source", "format": "text" },
-                    "remoteRegion": { "label": "Region", "format": "text" },
-                    "category": { "label": "Category", "format": "text" },
-                    "employmentType": { "label": "Type", "format": "text" },
-                    "salaryMin": { "label": "Salary min", "format": "number" },
-                    "salaryMax": { "label": "Salary max", "format": "number" },
-                    "salaryCurrency": { "label": "Currency", "format": "text" },
-                    "publishedAt": { "label": "Published", "format": "date" },
-                    "url": { "label": "Job page", "format": "link" },
-                    "errorType": { "label": "Error type", "format": "text" },
-                    "error": { "label": "Error", "format": "text" }
+                    "title": {
+                        "label": "Job title",
+                        "format": "text"
+                    },
+                    "company": {
+                        "label": "Company",
+                        "format": "text"
+                    },
+                    "source": {
+                        "label": "Source",
+                        "format": "text"
+                    },
+                    "remoteRegion": {
+                        "label": "Region",
+                        "format": "text"
+                    },
+                    "category": {
+                        "label": "Category",
+                        "format": "text"
+                    },
+                    "employmentType": {
+                        "label": "Type",
+                        "format": "text"
+                    },
+                    "salaryMin": {
+                        "label": "Salary min",
+                        "format": "number"
+                    },
+                    "salaryMax": {
+                        "label": "Salary max",
+                        "format": "number"
+                    },
+                    "salaryCurrency": {
+                        "label": "Currency",
+                        "format": "text"
+                    },
+                    "publishedAt": {
+                        "label": "Published",
+                        "format": "date"
+                    },
+                    "url": {
+                        "label": "Job page",
+                        "format": "link"
+                    },
+                    "errorType": {
+                        "label": "Error type",
+                        "format": "text"
+                    },
+                    "error": {
+                        "label": "Error",
+                        "format": "text"
+                    }
                 }
             }
         },
@@ -59,16 +275,46 @@
             "display": {
                 "component": "table",
                 "properties": {
-                    "companyLogo": { "label": "Logo", "format": "image" },
-                    "title": { "label": "Job title", "format": "text" },
-                    "company": { "label": "Company", "format": "text" },
-                    "source": { "label": "Source", "format": "text" },
-                    "location": { "label": "Location", "format": "text" },
-                    "tags": { "label": "Tags", "format": "array" },
-                    "salaryRaw": { "label": "Salary", "format": "text" },
-                    "descriptionText": { "label": "Description", "format": "text" },
-                    "applyUrl": { "label": "Apply", "format": "link" },
-                    "publishedAt": { "label": "Published", "format": "date" }
+                    "companyLogo": {
+                        "label": "Logo",
+                        "format": "image"
+                    },
+                    "title": {
+                        "label": "Job title",
+                        "format": "text"
+                    },
+                    "company": {
+                        "label": "Company",
+                        "format": "text"
+                    },
+                    "source": {
+                        "label": "Source",
+                        "format": "text"
+                    },
+                    "location": {
+                        "label": "Location",
+                        "format": "text"
+                    },
+                    "tags": {
+                        "label": "Tags",
+                        "format": "array"
+                    },
+                    "salaryRaw": {
+                        "label": "Salary",
+                        "format": "text"
+                    },
+                    "descriptionText": {
+                        "label": "Description",
+                        "format": "text"
+                    },
+                    "applyUrl": {
+                        "label": "Apply",
+                        "format": "link"
+                    },
+                    "publishedAt": {
+                        "label": "Published",
+                        "format": "date"
+                    }
                 }
             }
         }

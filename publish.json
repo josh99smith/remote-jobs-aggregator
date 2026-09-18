@@ -1,10 +1,17 @@
 {
     "seoTitle": "Remote Jobs API: RemoteOK, Remotive, Himalayas, Jobicy, WWR",
     "seoDescription": "Aggregate remote job listings from 5 public job boards into one normalized JSON dataset: title, company, salary, region, tags, apply link. $0.001 per job.",
-    "categories": ["JOBS", "AUTOMATION"],
+    "categories": [
+        "JOBS",
+        "AUTOMATION"
+    ],
     "isPublic": true,
     "actorPermissionLevel": "LIMITED_PERMISSIONS",
-    "defaultRunOptions": { "build": "latest", "memoryMbytes": 512, "timeoutSecs": 3600 },
+    "defaultRunOptions": {
+        "build": "latest",
+        "memoryMbytes": 512,
+        "timeoutSecs": 3600
+    },
     "pricing": {
         "events": {
             "job-listed": {
@@ -14,5 +21,6 @@
                 "isPrimaryEvent": true
             }
         }
-    }
+    },
+    "pictureUrl": "https://api.apify.com/v2/key-value-stores/xwGvZbThlWx5vaPgh/records/remote-jobs-aggregator.png"
 }
