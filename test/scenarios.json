@@ -1,0 +1,108 @@
+{
+    "happy-path": {
+        "input": {},
+        "expect": {
+            "status": "SUCCEEDED",
+            "minItems": 300,
+            "maxFailed": 0,
+            "maxDurationSecs": 120
+        }
+    },
+    "keyword-filter": {
+        "input": {
+            "keywords": [
+                "python",
+                "react"
+            ],
+            "postedWithinDays": 60
+        },
+        "expect": {
+            "status": "SUCCEEDED",
+            "minItems": 5,
+            "maxFailed": 0
+        }
+    },
+    "single-source-remoteok": {
+        "input": {
+            "sources": [
+                "remoteok"
+            ],
+            "maxJobsPerSource": 50,
+            "postedWithinDays": 0
+        },
+        "expect": {
+            "status": "SUCCEEDED",
+            "minItems": 30,
+            "maxFailed": 0
+        }
+    },
+    "himalayas-max": {
+        "input": {
+            "sources": [
+                "himalayas"
+            ],
+            "maxJobsPerSource": 1000,
+            "postedWithinDays": 0
+        },
+        "expect": {
+            "status": "SUCCEEDED",
+            "minItems": 500,
+            "maxFailed": 0,
+            "maxDurationSecs": 180
+        }
+    },
+    "wwr-only-raw-nodedupe": {
+        "input": {
+            "sources": [
+                "weworkremotely"
+            ],
+            "includeDescription": false,
+            "includeRaw": true,
+            "dedupe": false
+        },
+        "expect": {
+            "status": "SUCCEEDED",
+            "minItems": 50,
+            "maxFailed": 0
+        }
+    },
+    "category-filter": {
+        "input": {
+            "categories": [
+                "design",
+                "marketing"
+            ],
+            "postedWithinDays": 90
+        },
+        "expect": {
+            "status": "SUCCEEDED",
+            "minItems": 5
+        }
+    },
+    "no-match-keywords": {
+        "input": {
+            "keywords": [
+                "zzzzqqqxxx"
+            ]
+        },
+        "expect": {
+            "status": "SUCCEEDED",
+            "maxItems": 5
+        }
+    },
+    "budget-cap": {
+        "input": {
+            "sources": [
+                "himalayas"
+            ],
+            "maxJobsPerSource": 300,
+            "postedWithinDays": 0
+        },
+        "maxTotalChargeUsd": 0.03,
+        "expect": {
+            "status": "SUCCEEDED",
+            "maxItems": 60,
+            "stoppedEarlyDueToBudget": true
+        }
+    }
+}

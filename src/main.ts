@@ -60,14 +60,21 @@ async function pushJobs(jobs: JobRecord[], label: string): Promise<{ pushed: num
     let pushed = 0;
     let charged = 0;
     for (let i = 0; i < jobs.length && !stopBecauseOfBudget; i += PUSH_BATCH_SIZE) {
-        const batch = jobs.slice(i, i + PUSH_BATCH_SIZE);
-        const { eventChargeLimitReached, chargedCount } = await Actor.pushData(batch, CHARGE_EVENT);
-        const accepted = isPayPerEvent ? Math.min(chargedCount ?? batch.length, batch.length) : batch.length;
+        const wanted = jobs.slice(i, i + PUSH_BATCH_SIZE);
+        // Ask the budget how many events still fit and push only that many (the SDK's chargedCount over-reports).
+        const allowed = isPayPerEvent ? Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(CHARGE_EVENT) : wanted.length;
+        const batch = wanted.slice(0, Math.max(0, allowed));
+        let eventChargeLimitReached = batch.length < wanted.length;
+        if (batch.length > 0) {
+            const result = await Actor.pushData(batch, CHARGE_EVENT);
+            eventChargeLimitReached = eventChargeLimitReached || result.eventChargeLimitReached;
+        }
+        const accepted = batch.length;
         for (const job of batch.slice(0, accepted)) {
             log.info(`[${label}] ${job.title}${job.company ? ` @ ${job.company}` : ''}`);
         }
         pushed += accepted;
-        charged += chargedCount ?? 0;
+        charged += accepted;
         if (eventChargeLimitReached) {
             stopBecauseOfBudget = true;
             log.warning(
