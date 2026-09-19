@@ -1,38 +1,34 @@
-A **remote jobs API** that collects fresh remote job listings from five public job boards into one normalized dataset. Remote Jobs Aggregator pulls the latest openings from [RemoteOK](https://remoteok.com), [Remotive](https://remotive.com), [Himalayas](https://himalayas.app), [Jobicy](https://jobicy.com) and [We Work Remotely](https://weworkremotely.com), maps every listing to the same fields (title, company, region, salary, tags, description, apply link) and removes duplicates across boards. It only uses the boards' **official public APIs and RSS feeds**. It is **not** a scraper of LinkedIn, Indeed or any site that forbids automated access.
+A **remote jobs API** that collects remote job listings from five public job boards into one normalized, de-duplicated dataset: [RemoteOK](https://remoteok.com), [Remotive](https://remotive.com), [Himalayas](https://himalayas.app), [Jobicy](https://jobicy.com) and [We Work Remotely](https://weworkremotely.com). Every listing gets the same fields (title, company, region, salary, tags, description, apply link). It uses only the boards' **official public APIs and RSS feeds** and is **not** a scraper of LinkedIn, Indeed or any site that forbids automated access.
 
 ## Features
 
-- Get remote developer jobs as JSON from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely
-- Filter remote jobs by keyword, for example python, react or product manager
-- Filter remote jobs by category such as programming, design, marketing or customer support
-- Get remote jobs with salary ranges parsed into numbers and currency
-- Export remote job listings to CSV, Excel or Google Sheets
-- Deduplicate the same job posted on several remote job boards
-- Schedule a daily remote jobs feed for a job board, newsletter or Slack digest
-- Monitor mode: get only the jobs that are new since the last run, so alerts never repeat
-- Filter remote jobs by hiring region (US, EU, UK, LATAM, APAC, Worldwide)
+- Remote developer jobs as JSON from all five boards
+- Keyword, category and hiring region filters (US, EU, UK, LATAM, APAC, Worldwide)
+- Salary ranges parsed into numbers and currency
+- Export to CSV, Excel or Google Sheets
+- Cross-board deduplication
+- Scheduled daily feeds for job boards, newsletters or Slack digests
+- Monitor mode: only jobs new since the last run, so alerts never repeat
 
 ## What can you do with Remote Jobs Aggregator?
 
-- **Run a remote job board or niche job site**: refresh "remote Python jobs in Europe" every few hours and link candidates to the original posting.
-- **Job alert newsletters and Slack / Discord digests**: schedule a daily run filtered by keywords and pipe new records to Zapier, Make, Gmail or Slack through Apify integrations.
-- **Market research and salary benchmarking**: track how many remote roles mention a technology, where companies hire and which salary ranges they publish.
-- **Feed AI agents and RAG pipelines**: `descriptionText` is ready for embeddings, and the Actor is callable as a tool through the Apify MCP server.
-- **Recruiting intelligence**: see which companies are hiring remotely right now and for what roles.
+- **Job boards and niche job sites**: refresh "remote Python jobs in Europe" every few hours, linking to the original posting.
+- **Alert newsletters and Slack / Discord digests**: a daily keyword-filtered run piped to Zapier, Make, Gmail or Slack.
+- **Market research and salary benchmarking**: which technologies, hiring regions and salary ranges remote roles mention.
+- **AI agents and RAG pipelines**: `descriptionText` is ready for embeddings.
+- **Recruiting intelligence**: which companies are hiring remotely right now, and for what.
 
 ## How it works
 
-For each selected board the Actor calls its public JSON API (RemoteOK, Remotive, Himalayas, Jobicy) or parses its RSS feeds (We Work Remotely, main plus ten category feeds). Every listing becomes one common record: salary strings such as "$170k - $200k" are parsed into numbers, location rules such as "Northern America, LATAM, Europe" become a compact `remoteRegion`, employment types are unified and HTML descriptions get a plain-text version. Listings are then filtered by age, keywords and categories, and each title + company pair is kept once across boards.
-
-Boards expose only their most recent listings (roughly 100 to 1,000 each; Remotive delays its public feed by 24 hours), so this is a source of current openings, not a historical archive.
+For each selected board the Actor calls its public JSON API (RemoteOK, Remotive, Himalayas, Jobicy) or parses its RSS feeds (We Work Remotely: main plus ten category feeds). Salaries such as "$170k - $200k" become numbers, location rules such as "Northern America, LATAM, Europe" become a compact `remoteRegion`, employment types are unified and HTML descriptions get a plain-text version. Listings are filtered by age, keywords and categories, and each title + company pair is kept once across boards.
 
 ## How to use it
 
-1. Open the Actor and keep all five **Job boards** selected, or untick the ones you do not need.
-2. Optionally add **Keywords** (whole-word match against title, company and tags) and **Categories** (fuzzy match against each board's categories and tags).
-3. Set **Posted within (days)** and **Max jobs per source** to control freshness and volume.
-4. Click **Start**. Results appear in the **Output** tab within a minute; download JSON, CSV, Excel or XML, or connect an integration.
-5. Add a **Schedule** to keep the data fresh. Every 3 to 6 hours is plenty; the boards update a few times a day. Turn on **Only new items since the last run** so each scheduled run delivers only listings you have not received before (see Monitor mode below).
+1. Keep all five **Job boards** selected, or untick some.
+2. Optionally add **Keywords** (matched on title, company and tags) and **Categories**.
+3. Set **Posted within (days)** and **Max jobs per source**.
+4. Click **Start**; results appear in the **Output** tab within a minute as JSON, CSV, Excel or XML.
+5. Add a **Schedule** (every 3 to 6 hours; boards update a few times a day) and turn on **Only new items since the last run** (see Monitor mode).
 
 ```json
 {
@@ -48,7 +44,7 @@ Boards expose only their most recent listings (roughly 100 to 1,000 each; Remoti
 
 ## Use it from the API, Python, JavaScript or an AI agent
 
-Fetch the latest matching jobs in one HTTP call:
+One HTTP call:
 
 ```bash
 curl -X POST "https://api.apify.com/v2/acts/josh99smith~remote-jobs-aggregator/run-sync-get-dataset-items?token=<YOUR_API_TOKEN>" \
@@ -56,7 +52,7 @@ curl -X POST "https://api.apify.com/v2/acts/josh99smith~remote-jobs-aggregator/r
   -d '{"keywords": ["python"], "postedWithinDays": 7}'
 ```
 
-Python, with the `apify-client` package:
+Python (`apify-client`):
 
 ```python
 from apify_client import ApifyClient
@@ -69,7 +65,7 @@ for job in client.dataset(run["defaultDatasetId"]).iterate_items():
     print(job["title"], "-", job["company"], job["url"])
 ```
 
-JavaScript or TypeScript, with the `apify-client` package:
+JavaScript or TypeScript (`apify-client`):
 
 ```javascript
 import { ApifyClient } from "apify-client";
@@ -85,7 +81,7 @@ const { items } = await client.dataset(run.defaultDatasetId).listItems();
 console.log(items);
 ```
 
-The Actor is also available as a tool through the Apify MCP server for AI agents, and it can be scheduled or connected to Zapier, Make, n8n and Google Sheets in the **Integrations** tab.
+It is also a tool in the Apify MCP server for AI agents and connects to Zapier, Make, n8n and Google Sheets in the **Integrations** tab.
 
 ## Output
 
@@ -119,7 +115,7 @@ One record per job (description trimmed):
 }
 ```
 
-A board that cannot be reached produces a free record instead of stopping the run:
+An unreachable board produces a free record instead of stopping the run:
 
 ```json
 { "success": false, "source": "Remotive", "errorType": "rate-limited", "error": "HTTP 429 Too Many Requests for https://remotive.com/api/remote-jobs?limit=200", "fetchedAt": "..." }
@@ -129,42 +125,38 @@ A board that cannot be reached produces a free record instead of stopping the ru
 
 | Field | Description |
 | --- | --- |
-| `id`, `source` | Board-prefixed identifier (`remoteok:1137400`) and board name (`RemoteOK`, `Remotive`, `Himalayas`, `Jobicy`, `We Work Remotely`). |
-| `title`, `company`, `companyLogo` | Job title, employer and logo URL when available. |
-| `location` | The board's own location text. |
-| `remoteRegion` | Normalized hiring region: `Worldwide`, `US`, `Canada`, `LATAM`, `UK`, `EU`, `APAC`, `Africa`, `Middle East` (comma-separated when several apply, `null` when unknown). |
-| `category`, `tags[]` | Primary category and the board's tags, skills or industries. |
+| `id`, `source` | Board-prefixed id (`remoteok:1137400`) and board name (`RemoteOK`, `Remotive`, `Himalayas`, `Jobicy`, `We Work Remotely`). |
+| `title`, `company`, `companyLogo` | Title, employer, logo URL. |
+| `location` | Board's own location text. |
+| `remoteRegion` | `Worldwide`, `US`, `Canada`, `LATAM`, `UK`, `EU`, `APAC`, `Africa` or `Middle East`; comma-separated when several apply, `null` when unknown. |
+| `category`, `tags[]` | Primary category; board tags, skills or industries. |
 | `employmentType` | `Full-Time`, `Part-Time`, `Contract`, `Freelance`, `Internship`, `Temporary` or `null`. |
-| `salaryMin`, `salaryMax`, `salaryCurrency`, `salaryPeriod`, `salaryRaw` | Parsed salary range plus the original text; `null` when the board publishes none. |
-| `descriptionHtml`, `descriptionText` | Full HTML (max 20,000 characters, optional) and a plain-text excerpt (first 2,000). |
-| `url`, `applyUrl`, `publishedAt`, `fetchedAt` | Listing URL, apply link and ISO 8601 timestamps. |
-| `isNew` | `true` when the job was not delivered by any earlier run that used the same state store, `false` when it was. Always present, so you can keep the full output and still spot new listings. |
-| `raw` | Only with **Include raw source record**: the untouched item from the board. |
-| `errorType`, `error` | Failure records only: `dns`, `timeout`, `blocked`, `http-error`, `network`, `not-found`, `rate-limited` or `other`. |
+| `salaryMin`, `salaryMax`, `salaryCurrency`, `salaryPeriod`, `salaryRaw` | Parsed range plus original text; `null` when unpublished. |
+| `descriptionHtml`, `descriptionText` | Full HTML (max 20,000 characters, optional); plain-text excerpt (first 2,000). |
+| `url`, `applyUrl`, `publishedAt`, `fetchedAt` | Listing URL, apply link, ISO 8601 timestamps. |
+| `isNew` | `true` unless an earlier run with the same state store delivered the job; always present. |
+| `raw` | With **Include raw source record** only: the untouched board item. |
+| `errorType`, `error` | Failures only: `dns`, `timeout`, `blocked`, `http-error`, `network`, `not-found`, `rate-limited` or `other`. |
 
-The `SUMMARY` record in the key-value store shows, per board, how many jobs were fetched, filtered, de-duplicated and billed.
+The `SUMMARY` key-value record gives per-board counts (fetched, filtered, de-duplicated, billed) plus `newItems`, `alreadySeen` and `stateStoreName`.
 
 ## Monitor mode: only new jobs since the last run
 
-Switch on **Only new items since the last run** and the Actor remembers the `id` of every job it delivers in a named key-value store (`remote-jobs-aggregator-seen` by default). The first run returns everything that matches your filters; every run after that returns **only listings that were not in an earlier run**. Jobs that are filtered out as already seen are never billed, so a scheduled run that finds nothing new costs nothing.
+With **Only new items since the last run** on, the Actor stores the `id` of every delivered job in a named key-value store (`remote-jobs-aggregator-seen` by default). The first run returns everything matching your filters; later runs return **only listings not seen in an earlier run**. Skipped jobs are never billed.
 
-This is the setup for job alerts: schedule the Actor hourly with your keywords, connect the dataset to Slack, email, Discord, Google Sheets or a webhook in the **Integrations** tab, and each notification contains only fresh openings. The state store is shared by all runs of the Actor in your account, so set a different **State store name** for each keyword set or filter you want to track separately (for example `python-eu` and `design-worldwide`).
+For alerts, schedule hourly runs and connect the dataset to Slack, email, Discord, Google Sheets or a webhook in the **Integrations** tab. The store is shared by all runs in your account, so give each keyword set you track its own **State store name** (for example `python-eu` and `design-worldwide`).
 
-Details worth knowing:
-
-- Ids that have not appeared in any run for **Forget seen items after (days)** (default 90) are dropped from the store; a job that comes back after that counts as new again. The store holds at most 100,000 ids.
-- With monitor mode off, the `isNew` field still tells you whether each job was seen before, so you can keep the full dataset and highlight new rows yourself.
-- The `SUMMARY` record reports `newItems`, `alreadySeen` and `stateStoreName` for each run.
+Ids absent for **Forget seen items after (days)** (default 90) are dropped and count as new if they return; the store holds at most 100,000 ids. With monitor mode off, `isNew` still marks previously seen jobs.
 
 ## Pricing: how much does it cost to aggregate remote jobs?
 
-You pay a **flat price per job record** written to the dataset (shown next to the Start button; at $0.001 per job, 1,000 jobs cost $1). Start-up, filtering, de-duplication, jobs skipped by monitor mode and boards that fail to load are free. The Actor stops on its own when a run reaches the maximum cost you set, so a wide search never produces a surprise bill. A default run (five boards, 200 jobs each, last 30 days) typically yields 500 to 700 unique listings.
+You pay a **flat price per job record** (shown next to the Start button; at $0.001 per job, 1,000 jobs cost $1). Start-up, filtering, de-duplication, jobs skipped by monitor mode and boards that fail to load are free, and the Actor stops when a run reaches the maximum cost you set. A default run (five boards, 200 jobs each, last 30 days) yields 500 to 700 unique listings.
 
 **How it compares (September 2026).** Other multi-board aggregators on Apify Store charge $0.002 per unique job, or $0.015 per job plus $0.01 for salary data; single-board scrapers charge $0.001 for one board. This Actor covers five boards for $0.001 per job, adds monitor mode so scheduled runs only return new listings, and never bills jobs removed by your keyword, category or date filters.
 
 ## Attribution: what you must do with the data
 
-The boards publish these feeds so that others can share their jobs and each asks for credit in return. When you display or republish records, honour the requirement of the board in `source`:
+Each board asks for credit in return for its feed. When you display or republish records, honour the requirement of the board in `source`:
 
 - **RemoteOK**: link to the job's `url` on Remote OK with a normal (follow) link and name Remote OK as the source. Do not use their logo without permission.
 - **Remotive**: link to the job `url` and name Remotive as the source. Do not submit their jobs to other aggregators (Jooble, Google Jobs, LinkedIn Jobs, ...) and do not gate listings behind a sign-up form.
@@ -183,27 +175,27 @@ Always send applicants to the original posting rather than re-hosting the applic
 
 ### Is it legal to use this remote jobs data?
 
-The Actor only reads endpoints the boards publish for this purpose, at low request rates, and stores no personal data. Following each board's attribution conditions and the laws that apply to your use is your responsibility.
+The Actor reads only endpoints the boards publish for this purpose, at low request rates, and stores no personal data. Complying with each board's attribution conditions and applicable law is your responsibility.
 
 ### How many remote jobs can I get per run?
 
-Boards expose only their newest listings (RemoteOK about 100, Remotive a small public sample, Jobicy up to 200, Himalayas and We Work Remotely a few hundred), so **Max jobs per source** tops out at 1,000 per board and `postedWithinDays` removes older ones. A default run returns 500 to 700 unique jobs.
+Boards expose only their newest listings (RemoteOK about 100, Remotive a small public sample, Jobicy up to 200, Himalayas and We Work Remotely a few hundred), so **Max jobs per source** tops out at 1,000 per board and `postedWithinDays` removes older ones.
 
 ### How fresh are the listings?
 
-Each run fetches the boards live, so you get whatever they publish at that moment; Remotive delays its public feed by about 24 hours. Schedule the Actor every few hours with **Only new items since the last run** on to receive only the jobs that appeared since the previous run.
+Each run fetches the boards live; Remotive delays its public feed by about 24 hours.
 
 ### How do I reset the seen list?
 
-Open **Storage > Key-value stores** in Apify Console and delete the store named in **State store name** (`remote-jobs-aggregator-seen` unless you changed it); the next run starts from scratch and returns everything again. To start a fresh watchlist without losing the old one, set a new **State store name** instead.
+Delete the store named in **State store name** (`remote-jobs-aggregator-seen` unless you changed it) under **Storage > Key-value stores** in Apify Console; the next run returns everything again. To keep the old watchlist, set a new **State store name** instead.
 
 ### Can it search LinkedIn, Indeed or Glassdoor?
 
-No. Those sites prohibit automated access and offer no public feed, so they are out of scope by design.
+No. Those sites prohibit automated access and offer no public feed.
 
 ### Will the output fields change between runs?
 
-No. Output fields are stable: existing fields are never renamed or removed without a major version bump announced in the changelog, and new fields are only ever added. You can build integrations on the schema without checking it after every run.
+No. Existing fields are never renamed or removed without a major version bump announced in the changelog; new fields are only ever added.
 
 ## Related Actors by the same developer
 
@@ -218,4 +210,4 @@ No. Output fields are stable: existing fields are never renamed or removed witho
 
 ## Support and feedback
 
-Missing a board with a public feed, or found a mapping that looks wrong? Open a ticket in the **Issues** tab. The Actor is open source under the MIT licence.
+Missing a board with a public feed, or found a wrong mapping? Open a ticket in the **Issues** tab. The Actor is open source under the MIT licence.
