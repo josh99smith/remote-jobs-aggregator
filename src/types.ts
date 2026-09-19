@@ -21,6 +21,9 @@ export interface Input {
     dedupe?: boolean;
     includeDescription?: boolean;
     includeRaw?: boolean;
+    onlyNew?: boolean;
+    stateStoreName?: string;
+    seenTtlDays?: number;
 }
 
 /** One normalized job listing. `raw` is only present when `includeRaw` is on. */
@@ -47,6 +50,8 @@ export interface JobRecord {
     applyUrl: string | null;
     publishedAt: string | null;
     fetchedAt: string;
+    /** True when this job was not delivered by any previous run that shared the same state store. */
+    isNew?: boolean;
     raw?: unknown;
 }
 

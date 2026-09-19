@@ -12,7 +12,7 @@
             "type": "string",
             "title": "Run summary",
             "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY",
-            "description": "Per-source counts of fetched, filtered, de-duplicated and billed jobs."
+            "description": "Per-source counts of fetched, filtered, de-duplicated and billed jobs, plus newItems / alreadySeen counts and the state store used by monitor mode."
         }
     }
 }

@@ -145,6 +145,10 @@
                 "format": "date-time",
                 "description": "When the actor fetched this record, as an ISO 8601 timestamp."
             },
+            "isNew": {
+                "type": "boolean",
+                "description": "True when this job was not delivered by any previous run sharing the same state store (see \"Only new items since the last run\"). Always present on job records."
+            },
             "raw": {
                 "description": "Only with \"Include raw source record\": the untouched item from the board API or feed, in the board's own format."
             },
@@ -193,6 +197,7 @@
                     "salaryMax",
                     "salaryCurrency",
                     "publishedAt",
+                    "isNew",
                     "url",
                     "errorType",
                     "error"
@@ -240,6 +245,10 @@
                     "publishedAt": {
                         "label": "Published",
                         "format": "date"
+                    },
+                    "isNew": {
+                        "label": "New",
+                        "format": "boolean"
                     },
                     "url": {
                         "label": "Job page",
