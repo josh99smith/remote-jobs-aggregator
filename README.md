@@ -160,6 +160,8 @@ Details worth knowing:
 
 You pay a **flat price per job record** written to the dataset (shown next to the Start button; at $0.001 per job, 1,000 jobs cost $1). Start-up, filtering, de-duplication, jobs skipped by monitor mode and boards that fail to load are free. The Actor stops on its own when a run reaches the maximum cost you set, so a wide search never produces a surprise bill. A default run (five boards, 200 jobs each, last 30 days) typically yields 500 to 700 unique listings.
 
+**How it compares (September 2026).** Other multi-board aggregators on Apify Store charge $0.002 per unique job, or $0.015 per job plus $0.01 for salary data; single-board scrapers charge $0.001 for one board. This Actor covers five boards for $0.001 per job, adds monitor mode so scheduled runs only return new listings, and never bills jobs removed by your keyword, category or date filters.
+
 ## Attribution: what you must do with the data
 
 The boards publish these feeds so that others can share their jobs and each asks for credit in return. When you display or republish records, honour the requirement of the board in `source`:
@@ -198,6 +200,10 @@ Open **Storage > Key-value stores** in Apify Console and delete the store named 
 ### Can it search LinkedIn, Indeed or Glassdoor?
 
 No. Those sites prohibit automated access and offer no public feed, so they are out of scope by design.
+
+### Will the output fields change between runs?
+
+No. Output fields are stable: existing fields are never renamed or removed without a major version bump announced in the changelog, and new fields are only ever added. You can build integrations on the schema without checking it after every run.
 
 ## Related Actors by the same developer
 
