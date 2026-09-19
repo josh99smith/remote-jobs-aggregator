@@ -66,7 +66,8 @@ log.info(
 const stateStore = await Actor.openKeyValueStore(stateStoreName);
 const seenBefore = parseSeenRecord(await stateStore.getValue(SEEN_RECORD_KEY));
 const seenBeforeCount = Object.keys(seenBefore.ids).length;
-if (seenBeforeCount > 0) log.info(`Loaded ${seenBeforeCount} previously seen job id(s) from store "${stateStoreName}".`);
+if (seenBeforeCount > 0)
+    log.info(`Loaded ${seenBeforeCount} previously seen job id(s) from store "${stateStoreName}".`);
 const idsSeenThisRun = new Set<string>();
 
 const chargingManager = Actor.getChargingManager();
@@ -94,7 +95,9 @@ async function pushJobs(jobs: JobRecord[], label: string): Promise<{ pushed: num
     for (let i = 0; i < jobs.length && !stopBecauseOfBudget; i += PUSH_BATCH_SIZE) {
         const wanted = jobs.slice(i, i + PUSH_BATCH_SIZE);
         // Ask the budget how many events still fit and push only that many (the SDK's chargedCount over-reports).
-        const allowed = isPayPerEvent ? Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(CHARGE_EVENT) : wanted.length;
+        const allowed = isPayPerEvent
+            ? Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(CHARGE_EVENT)
+            : wanted.length;
         const batch = wanted.slice(0, Math.max(0, allowed));
         let eventChargeLimitReached = batch.length < wanted.length;
         if (batch.length > 0) {
@@ -160,7 +163,14 @@ for (const source of sources) {
     totalPushed += pushed;
     totalCharged += charged;
     totalAlreadySeen += alreadySeen.length;
-    perSource[source] = { fetched: fetched.length, pushed, charged, ...stats, newJobs: fresh.length, alreadySeen: alreadySeen.length };
+    perSource[source] = {
+        fetched: fetched.length,
+        pushed,
+        charged,
+        ...stats,
+        newJobs: fresh.length,
+        alreadySeen: alreadySeen.length,
+    };
     log.info(
         `[${label}] fetched ${fetched.length}, kept ${pushed} (${stats.tooOld} too old, ${stats.keywordMiss} keyword miss, ` +
             `${stats.categoryMiss} category miss, ${stats.duplicates} duplicates, ${alreadySeen.length} seen before` +

@@ -9,6 +9,7 @@ A **remote jobs API** that collects fresh remote job listings from five public j
 - Export remote job listings to CSV, Excel or Google Sheets
 - Deduplicate the same job posted on several remote job boards
 - Schedule a daily remote jobs feed for a job board, newsletter or Slack digest
+- Monitor mode: get only the jobs that are new since the last run, so alerts never repeat
 - Filter remote jobs by hiring region (US, EU, UK, LATAM, APAC, Worldwide)
 
 ## What can you do with Remote Jobs Aggregator?
@@ -31,7 +32,7 @@ Boards expose only their most recent listings (roughly 100 to 1,000 each; Remoti
 2. Optionally add **Keywords** (whole-word match against title, company and tags) and **Categories** (fuzzy match against each board's categories and tags).
 3. Set **Posted within (days)** and **Max jobs per source** to control freshness and volume.
 4. Click **Start**. Results appear in the **Output** tab within a minute; download JSON, CSV, Excel or XML, or connect an integration.
-5. Add a **Schedule** to keep the data fresh. Every 3 to 6 hours is plenty; the boards update a few times a day.
+5. Add a **Schedule** to keep the data fresh. Every 3 to 6 hours is plenty; the boards update a few times a day. Turn on **Only new items since the last run** so each scheduled run delivers only listings you have not received before (see Monitor mode below).
 
 ```json
 {
@@ -113,7 +114,8 @@ One record per job (description trimmed):
     "url": "https://jobicy.com/jobs/153610-manager-clinical-review-and-quality-assurance-2",
     "applyUrl": "https://jobicy.com/jobs/153610-manager-clinical-review-and-quality-assurance-2",
     "publishedAt": "2026-09-18T14:43:04.000Z",
-    "fetchedAt": "2026-09-18T19:46:35.436Z"
+    "fetchedAt": "2026-09-18T19:46:35.436Z",
+    "isNew": true
 }
 ```
 
@@ -136,14 +138,27 @@ A board that cannot be reached produces a free record instead of stopping the ru
 | `salaryMin`, `salaryMax`, `salaryCurrency`, `salaryPeriod`, `salaryRaw` | Parsed salary range plus the original text; `null` when the board publishes none. |
 | `descriptionHtml`, `descriptionText` | Full HTML (max 20,000 characters, optional) and a plain-text excerpt (first 2,000). |
 | `url`, `applyUrl`, `publishedAt`, `fetchedAt` | Listing URL, apply link and ISO 8601 timestamps. |
+| `isNew` | `true` when the job was not delivered by any earlier run that used the same state store, `false` when it was. Always present, so you can keep the full output and still spot new listings. |
 | `raw` | Only with **Include raw source record**: the untouched item from the board. |
 | `errorType`, `error` | Failure records only: `dns`, `timeout`, `blocked`, `http-error`, `network`, `not-found`, `rate-limited` or `other`. |
 
 The `SUMMARY` record in the key-value store shows, per board, how many jobs were fetched, filtered, de-duplicated and billed.
 
+## Monitor mode: only new jobs since the last run
+
+Switch on **Only new items since the last run** and the Actor remembers the `id` of every job it delivers in a named key-value store (`remote-jobs-aggregator-seen` by default). The first run returns everything that matches your filters; every run after that returns **only listings that were not in an earlier run**. Jobs that are filtered out as already seen are never billed, so a scheduled run that finds nothing new costs nothing.
+
+This is the setup for job alerts: schedule the Actor hourly with your keywords, connect the dataset to Slack, email, Discord, Google Sheets or a webhook in the **Integrations** tab, and each notification contains only fresh openings. The state store is shared by all runs of the Actor in your account, so set a different **State store name** for each keyword set or filter you want to track separately (for example `python-eu` and `design-worldwide`).
+
+Details worth knowing:
+
+- Ids that have not appeared in any run for **Forget seen items after (days)** (default 90) are dropped from the store; a job that comes back after that counts as new again. The store holds at most 100,000 ids.
+- With monitor mode off, the `isNew` field still tells you whether each job was seen before, so you can keep the full dataset and highlight new rows yourself.
+- The `SUMMARY` record reports `newItems`, `alreadySeen` and `stateStoreName` for each run.
+
 ## Pricing: how much does it cost to aggregate remote jobs?
 
-You pay a **flat price per job record** written to the dataset (shown next to the Start button; at $0.001 per job, 1,000 jobs cost $1). Start-up, filtering, de-duplication and boards that fail to load are free. The Actor stops on its own when a run reaches the maximum cost you set, so a wide search never produces a surprise bill. A default run (five boards, 200 jobs each, last 30 days) typically yields 500 to 700 unique listings.
+You pay a **flat price per job record** written to the dataset (shown next to the Start button; at $0.001 per job, 1,000 jobs cost $1). Start-up, filtering, de-duplication, jobs skipped by monitor mode and boards that fail to load are free. The Actor stops on its own when a run reaches the maximum cost you set, so a wide search never produces a surprise bill. A default run (five boards, 200 jobs each, last 30 days) typically yields 500 to 700 unique listings.
 
 ## Attribution: what you must do with the data
 
@@ -174,7 +189,11 @@ Boards expose only their newest listings (RemoteOK about 100, Remotive a small p
 
 ### How fresh are the listings?
 
-Each run fetches the boards live, so you get whatever they publish at that moment; Remotive delays its public feed by about 24 hours. Schedule the Actor every few hours and filter on `publishedAt` or `id` to pick up only new jobs.
+Each run fetches the boards live, so you get whatever they publish at that moment; Remotive delays its public feed by about 24 hours. Schedule the Actor every few hours with **Only new items since the last run** on to receive only the jobs that appeared since the previous run.
+
+### How do I reset the seen list?
+
+Open **Storage > Key-value stores** in Apify Console and delete the store named in **State store name** (`remote-jobs-aggregator-seen` unless you changed it); the next run starts from scratch and returns everything again. To start a fresh watchlist without losing the old one, set a new **State store name** instead.
 
 ### Can it search LinkedIn, Indeed or Glassdoor?
 

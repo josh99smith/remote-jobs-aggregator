@@ -68,7 +68,11 @@ describe('markSeen', () => {
 
 describe('pruneSeen', () => {
     it('drops ids older than the TTL and keeps the rest', () => {
-        const record = { version: 1 as const, updatedAt: NOW.toISOString(), ids: { a: daysAgo(1), b: daysAgo(91), c: daysAgo(89) } };
+        const record = {
+            version: 1 as const,
+            updatedAt: NOW.toISOString(),
+            ids: { a: daysAgo(1), b: daysAgo(91), c: daysAgo(89) },
+        };
         const { record: pruned, pruned: count } = pruneSeen(record, 90, NOW);
         expect(Object.keys(pruned.ids).sort()).toEqual(['a', 'c']);
         expect(count).toBe(1);
@@ -82,7 +86,12 @@ describe('pruneSeen', () => {
     it('caps the record at maxIds by dropping the oldest entries', () => {
         const ids: Record<string, string> = {};
         for (let i = 0; i < 10; i += 1) ids[`id${i}`] = daysAgo(i);
-        const { record: pruned, pruned: count } = pruneSeen({ version: 1, updatedAt: NOW.toISOString(), ids }, 0, NOW, 4);
+        const { record: pruned, pruned: count } = pruneSeen(
+            { version: 1, updatedAt: NOW.toISOString(), ids },
+            0,
+            NOW,
+            4,
+        );
         expect(count).toBe(6);
         expect(Object.keys(pruned.ids).sort()).toEqual(['id0', 'id1', 'id2', 'id3']);
     });
