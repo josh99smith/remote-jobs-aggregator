@@ -1,3 +1,5 @@
+![remote-jobs-aggregator banner](https://raw.githubusercontent.com/josh99smith/apify-actor-assets/main/banners/remote-jobs-aggregator.png)
+
 A **remote jobs API** that collects remote job listings from five public job boards into one normalized, de-duplicated dataset: [RemoteOK](https://remoteok.com), [Remotive](https://remotive.com), [Himalayas](https://himalayas.app), [Jobicy](https://jobicy.com) and [We Work Remotely](https://weworkremotely.com). Every listing gets the same fields (title, company, region, salary, tags, description, apply link). It uses only the boards' **official public APIs and RSS feeds** and is **not** a scraper of LinkedIn, Indeed or any site that forbids automated access.
 
 ## Features
@@ -84,6 +86,8 @@ console.log(items);
 It is also a tool in the Apify MCP server for AI agents and connects to Zapier, Make, n8n and Google Sheets in the **Integrations** tab.
 
 ## Output
+
+![Sample output of remote-jobs-aggregator](https://raw.githubusercontent.com/josh99smith/apify-actor-assets/main/previews/remote-jobs-aggregator.png)
 
 One record per job (description trimmed):
 
