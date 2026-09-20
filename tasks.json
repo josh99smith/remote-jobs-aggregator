@@ -1,0 +1,63 @@
+[
+    {
+        "name": "remote-developer-jobs-this-week",
+        "title": "Remote developer jobs posted this week",
+        "seoTitle": "Remote developer jobs posted in the last 7 days",
+        "seoDescription": "Aggregate remote software jobs from five job boards, filtered to engineering keywords and the last week, with salary, tags and apply links.",
+        "description": "Aggregate remote software engineering jobs from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely, filtered by developer keywords and posted in the last 7 days. Includes salary ranges where published, tags and apply URLs.",
+        "input": {
+            "keywords": [
+                "developer",
+                "engineer",
+                "software"
+            ],
+            "postedWithinDays": 7
+        }
+    },
+    {
+        "name": "remote-marketing-and-design-jobs",
+        "title": "Remote marketing and design jobs",
+        "seoTitle": "Remote marketing and design jobs from 5 boards",
+        "seoDescription": "Marketing, content and design remote roles from five job boards in one JSON dataset, deduplicated across boards, filtered to the last 30 days.",
+        "description": "Collect remote marketing, content and design roles from five job boards into one deduplicated dataset, filtered to the last 30 days. Category filtering runs before billing, so only matching jobs are charged.",
+        "input": {
+            "categories": [
+                "marketing",
+                "design",
+                "content"
+            ],
+            "postedWithinDays": 30
+        }
+    },
+    {
+        "name": "new-remote-jobs-alert-only-new-since-last-run",
+        "title": "New remote jobs alert (only new since last run)",
+        "seoTitle": "New remote jobs alert: only listings since the last run",
+        "seoDescription": "Schedule this task hourly and receive only jobs not seen before, thanks to monitor mode. Connect it to Slack, email or a webhook via Integrations.",
+        "description": "Monitor mode example: schedule it hourly and each run returns only jobs that were not seen in previous runs, so an Integration to Slack, email or a webhook becomes a job alert. Already-seen jobs are never billed.",
+        "input": {
+            "keywords": [
+                "python",
+                "typescript",
+                "react"
+            ],
+            "postedWithinDays": 3,
+            "onlyNew": true
+        }
+    },
+    {
+        "name": "remote-jobs-with-salary-from-himalayas-and-jobicy",
+        "title": "Remote jobs with salary data",
+        "seoTitle": "Remote jobs with published salary ranges",
+        "seoDescription": "Pull remote listings from Himalayas and Jobicy, the boards that publish salary ranges most often, with normalized min, max, currency and period fields.",
+        "description": "Pull remote listings from Himalayas and Jobicy, the two boards that most often publish salary ranges, with normalized salaryMin, salaryMax, currency and period fields for compensation research.",
+        "input": {
+            "sources": [
+                "himalayas",
+                "jobicy"
+            ],
+            "maxJobsPerSource": 300,
+            "postedWithinDays": 30
+        }
+    }
+]
