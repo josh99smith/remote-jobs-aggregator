@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (2026-09-20)
+
+- The remaining run budget is now also tracked from the Actor's own charge count, so a batch can never overshoot the cost cap.
+
 ## 0.2.0 (2026-09-19)
 
 - Monitor mode: `onlyNew` remembers delivered job ids in a named key-value store (`stateStoreName`, default `remote-jobs-aggregator-seen`) and later runs return only listings not seen before. Skipped jobs are never billed.
