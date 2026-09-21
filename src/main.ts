@@ -20,6 +20,22 @@ const ACTOR_NAME = 'remote-jobs-aggregator';
 const REQUEST_TIMEOUT_MS = 60_000;
 const PUSH_BATCH_SIZE = 50;
 
+/**
+ * How many more `eventName` events fit in this run's cost cap, computed from our own count of events
+ * already charged (the SDK's internal bookkeeping has been observed to lag between batches).
+ */
+function eventsWithinBudget(eventName: string, alreadyCharged: number): number {
+    const cm = Actor.getChargingManager();
+    const info = cm.getPricingInfo();
+    if (!info.isPayPerEvent) return Number.MAX_SAFE_INTEGER;
+    const price = info.perEventPrices[eventName] ?? 0;
+    const cap = cm.getMaxTotalChargeUsd();
+    const sdkAllowed = cm.calculateMaxEventChargeCountWithinLimit(eventName);
+    if (!Number.isFinite(cap) || price <= 0) return sdkAllowed;
+    const own = Math.max(0, Math.floor((cap - alreadyCharged * price) / price + 1e-9));
+    return Math.min(sdkAllowed, own);
+}
+
 await Actor.init();
 
 Actor.on('aborting', async () => {
@@ -95,9 +111,7 @@ async function pushJobs(jobs: JobRecord[], label: string): Promise<{ pushed: num
     for (let i = 0; i < jobs.length && !stopBecauseOfBudget; i += PUSH_BATCH_SIZE) {
         const wanted = jobs.slice(i, i + PUSH_BATCH_SIZE);
         // Ask the budget how many events still fit and push only that many (the SDK's chargedCount over-reports).
-        const allowed = isPayPerEvent
-            ? Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(CHARGE_EVENT)
-            : wanted.length;
+        const allowed = isPayPerEvent ? eventsWithinBudget(CHARGE_EVENT, totalCharged + charged) : wanted.length;
         const batch = wanted.slice(0, Math.max(0, allowed));
         let eventChargeLimitReached = batch.length < wanted.length;
         if (batch.length > 0) {
