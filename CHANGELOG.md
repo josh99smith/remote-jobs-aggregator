@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (2026-09-23)
+
+- Listing: joined the Best Damn series. New title "Best Damn Remote Jobs Aggregator", new description, icon and README banner. No change to inputs, output or pricing.
+
 ## 0.2.1 (2026-09-20)
 
 - The remaining run budget is now also tracked from the Actor's own charge count, so a batch can never overshoot the cost cap.

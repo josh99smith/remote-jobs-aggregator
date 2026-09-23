@@ -2,8 +2,8 @@
     "$schema": "https://apify.com/schemas/v1/actor.ide.json",
     "actorSpecification": 1,
     "name": "remote-jobs-aggregator",
-    "title": "Remote Jobs Scraper & Aggregator API",
-    "description": "Remote job listings from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely as clean JSON: title, company, salary, tags, apply URL. Pay per job.",
+    "title": "Best Damn Remote Jobs Aggregator",
+    "description": "Aggregate remote job listings from RemoteOK, Remotive, Himalayas, Jobicy and We Work Remotely into one deduplicated JSON feed: title, company, salary, tags and apply URL. Five boards in one run, pay per job.",
     "version": "0.1",
     "buildTag": "latest",
     "meta": {
