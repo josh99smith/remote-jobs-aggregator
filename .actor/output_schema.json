@@ -1,6 +1,6 @@
 {
     "actorOutputSchemaVersion": 1,
-    "title": "Remote Jobs Aggregator output",
+    "title": "Best Damn Remote Jobs Aggregator output",
     "properties": {
         "results": {
             "type": "string",

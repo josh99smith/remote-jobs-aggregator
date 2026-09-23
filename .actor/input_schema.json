@@ -1,6 +1,6 @@
 {
     "$schema": "https://apify.com/schemas/v1/input.ide.json",
-    "title": "Remote Jobs Aggregator input",
+    "title": "Best Damn Remote Jobs Aggregator input",
     "description": "Pick the job boards to pull from and optionally narrow the results by keyword, category and age. Each job listed is one billable result; a source that cannot be reached is reported for free.",
     "type": "object",
     "schemaVersion": 1,
