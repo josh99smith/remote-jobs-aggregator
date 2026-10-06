@@ -248,6 +248,6 @@ You can also attach [webhooks](https://docs.apify.com/platform/integrations/webh
 
 ## Support and feedback
 
-Missing a board with a public feed, or found a wrong mapping? Open a ticket in the **Issues** tab. The Actor is open source under the MIT licence.
+Missing a board with a public feed, or found a wrong mapping? Open a ticket in the **Issues** tab. The Actor is open source under the MIT licence. If this Actor saved you time, a review on its Store page helps other people find it.
 
 The full source code is on GitHub: [josh99smith/remote-jobs-aggregator](https://github.com/josh99smith/remote-jobs-aggregator). Stars and pull requests are welcome.
